@@ -1,0 +1,36 @@
+# Dependabot configuration for rivenai/.github
+#
+# This file applies ONLY to the rivenai/.github repository itself. It is also
+# a reference template that other rivenai/* repos should adapt and commit to
+# their own .github/dependabot.yml.
+#
+# Multi-ecosystem coverage:
+#   - github-actions    — keeps reusable workflows' pinned action versions current
+#   - pip               — enable in Python repos
+#   - npm               — enable in Node repos
+#   - docker            — enable in repos with a Dockerfile
+#
+# When enabled in a caller repo, Dependabot PRs are auto-merged for patch and
+# dev-dep minor bumps via .github/workflows/dependabot-auto-merge.yml (which
+# uses rivenai/.github/.github/workflows/dependabot-auto-merge.yml@main).
+
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - agent:dependabot
+    commit-message:
+      prefix: "chore(deps)"
+      include: scope
+    groups:
+      actions-minor-and-patch:
+        update-types:
+          - minor
+          - patch
