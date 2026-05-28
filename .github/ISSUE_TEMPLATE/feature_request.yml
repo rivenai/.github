@@ -1,0 +1,55 @@
+name: Feature request
+description: Propose a new feature or enhancement for a Riven AI product
+title: "[feat] <short description>"
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing, please check that this idea is not already tracked in an existing issue or discussion.
+  - type: input
+    id: repository
+    attributes:
+      label: Affected repository or surface
+      placeholder: rivenai/riven-platform
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the user problem or operational pain. Avoid jumping straight to a solution.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: A clear description of what you want to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What other approaches did you consider, and why did you reject them?
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority signal
+      options:
+        - p4 — nice to have
+        - p3 — should do
+        - p2 — important
+        - p1 — critical
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Pre-submit checks
+      options:
+        - label: I have searched existing issues and discussions for this request
+          required: true
+        - label: This request does NOT include secrets, tokens, customer data, or PII
+          required: true
