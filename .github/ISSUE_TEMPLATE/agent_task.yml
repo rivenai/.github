@@ -1,0 +1,81 @@
+name: "🤖 Agent task"
+description: A task for one of the cloud agents (Copilot, Claude, Devin, Cursor, etc.)
+title: "[agent-task]: "
+labels:
+  - needs-triage
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to delegate work to a cloud agent. The agent will read
+        [AGENTS.md](https://github.com/rivenai/.github/blob/main/AGENTS.md) before
+        starting and is required to apply the matching `agent:*` label to every
+        pull request it opens.
+
+  - type: dropdown
+    id: target-agent
+    attributes:
+      label: Target agent
+      description: Which agent should pick this up? Each label must match the canonical taxonomy.
+      options:
+        - "agent:copilot (GitHub Copilot Coding Agent)"
+        - "agent:claude-code (Anthropic Claude Code Action)"
+        - "agent:codespaces-kimi (Codespaces background agent)"
+        - "agent:cursor (Cursor background agent)"
+        - "agent:aider (Aider CLI)"
+        - "agent:devin (Cognition Devin)"
+        - "any-available"
+    validations:
+      required: true
+
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+      description: Plain-English description of the outcome. Be specific.
+      placeholder: "Migrate the bridge router from FastAPI 0.110 to 0.115 and update tests."
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      description: Bullet list. The agent is done when ALL items are checked.
+      value: |
+        - [ ] All existing tests pass
+        - [ ] New tests cover the change
+        - [ ] PR is labeled with the matching `agent:*` label
+        - [ ] PR follows the conventional commit prefix policy
+        - [ ] No SAML / billing / discussions settings touched
+    validations:
+      required: true
+
+  - type: input
+    id: constraints
+    attributes:
+      label: Constraints (optional)
+      description: Files/paths the agent must NOT touch, deadlines, dependencies, etc.
+      placeholder: "Do not modify /infra/terraform/**. Must complete before $DATE."
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - p1-critical
+        - p2-important
+        - p3-should-do
+        - p4-nice-to-have
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: agent-policy
+    attributes:
+      label: Agent policy acknowledgement
+      options:
+        - label: I have read AGENTS.md and the agent assigned to this task will follow it.
+          required: true
+        - label: I understand the agent must label its PR with the matching `agent:*` label.
+          required: true
