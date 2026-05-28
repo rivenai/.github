@@ -1,0 +1,74 @@
+# Reusable label-sync workflow (workflow_call)
+#
+# Any rivenai/* repository can adopt the canonical 32-label taxonomy by
+# adding a tiny caller workflow that invokes this one. The taxonomy lives
+# in rivenai/.github at .github/labels.yml — single source of truth.
+#
+# Caller example (.github/workflows/labels.yml in the caller repo):
+#
+#   name: labels
+#   on:
+#     workflow_dispatch:
+#     schedule:
+#       - cron: "17 5 * * 1"   # weekly self-heal, Mondays 05:17 UTC
+#     push:
+#       branches: [main]
+#       paths:
+#         - ".github/workflows/labels.yml"
+#   permissions:
+#     issues: write
+#   jobs:
+#     sync:
+#       uses: rivenai/.github/.github/workflows/reusable-label-sync.yml@main
+#       with:
+#         delete-other-labels: false
+#
+# To opt into destructive convergence (delete anything not in the canonical
+# taxonomy), pass delete-other-labels: true — review carefully first.
+name: reusable-label-sync
+
+on:
+  workflow_call:
+    inputs:
+      delete-other-labels:
+        description: "If true, delete labels in the caller repo not present in the canonical taxonomy. DESTRUCTIVE."
+        required: false
+        default: false
+        type: boolean
+      labels-ref:
+        description: "Git ref of rivenai/.github to pull labels.yml from."
+        required: false
+        default: "main"
+        type: string
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch canonical taxonomy from rivenai/.github
+        uses: actions/checkout@v4
+        with:
+          repository: rivenai/.github
+          ref: ${{ inputs.labels-ref }}
+          path: __riven_github
+          sparse-checkout: |
+            .github/labels.yml
+          sparse-checkout-cone-mode: false
+
+      - name: Stage labels file at repo root
+        run: |
+          cp __riven_github/.github/labels.yml ./.riven-labels.yml
+          echo "--- canonical taxonomy ---"
+          head -n 40 ./.riven-labels.yml
+          echo "label count:"
+          grep -c '^- name:' ./.riven-labels.yml
+
+      - name: Apply labels to caller repository
+        uses: EndBug/label-sync@v2
+        with:
+          config-file: .riven-labels.yml
+          delete-other-labels: ${{ inputs.delete-other-labels }}
