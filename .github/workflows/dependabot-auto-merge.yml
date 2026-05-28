@@ -1,0 +1,65 @@
+# Reusable Dependabot auto-merge workflow
+#
+# Auto-approves and enables auto-merge for Dependabot PRs that are:
+#   - patch-level version bumps, OR
+#   - minor-level bumps for dev-dependencies
+# All other Dependabot PRs (major bumps, runtime minor bumps) require human review.
+#
+# Caller repos invoke this with:
+#   jobs:
+#     auto-merge:
+#       uses: rivenai/.github/.github/workflows/dependabot-auto-merge.yml@main
+#       secrets: inherit
+#
+# The caller repo must have "Allow auto-merge" enabled in repo settings and
+# branch protection on the target branch requiring status checks to pass.
+
+name: dependabot-auto-merge
+
+on:
+  workflow_call: {}
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch Dependabot metadata
+        id: meta
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Approve patch and dev-dep minor bumps
+        if: >
+          steps.meta.outputs.update-type == 'version-update:semver-patch' ||
+          (steps.meta.outputs.update-type == 'version-update:semver-minor' &&
+           steps.meta.outputs.dependency-type == 'direct:development')
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable auto-merge (squash) for eligible PRs
+        if: >
+          steps.meta.outputs.update-type == 'version-update:semver-patch' ||
+          (steps.meta.outputs.update-type == 'version-update:semver-minor' &&
+           steps.meta.outputs.dependency-type == 'direct:development')
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Comment on major bumps for human review
+        if: steps.meta.outputs.update-type == 'version-update:semver-major'
+        run: |
+          gh pr comment "$PR_URL" --body "This is a major version bump and requires human review per rivenai/.github AGENTS.md. Auto-merge has NOT been enabled."
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
