@@ -1,0 +1,33 @@
+# CODEOWNERS for rivenai/.github
+#
+# Rules: https://docs.github.com/en/repositories/managing-your-repositories-settings-and-features/customizing-your-repository/about-code-owners
+#
+# This file determines which teams must review changes to org-wide governance.
+# Once your GitHub teams exist (e.g. @rivenai/eng-leads, @rivenai/security),
+# replace the placeholders below with real team handles and commit.
+#
+# Until then, this file is intentionally permissive (no required owners) so
+# that bootstrap commits are not blocked. DO NOT leave it permissive once teams
+# are stood up.
+
+# Default owner for everything in this repo
+# *                              @rivenai/eng-leads
+
+# Governance documents require leadership review
+# AGENTS.md                      @rivenai/eng-leads
+# CONTRIBUTING.md                @rivenai/eng-leads
+# CODE_OF_CONDUCT.md             @rivenai/eng-leads
+# profile/README.md              @rivenai/eng-leads
+
+# Security policy requires the security team
+# SECURITY.md                    @rivenai/security
+
+# Reusable workflows are CI-critical infrastructure
+# .github/workflows/             @rivenai/eng-leads @rivenai/platform
+
+# Issue templates require docs review
+# .github/ISSUE_TEMPLATE/        @rivenai/eng-leads
+# .github/PULL_REQUEST_TEMPLATE.md @rivenai/eng-leads
+
+# Dependabot config
+# .github/dependabot.yml         @rivenai/platform
