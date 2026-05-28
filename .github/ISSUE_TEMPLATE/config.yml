@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/rivenai/.github/blob/main/SECURITY.md
+    about: Report security vulnerabilities privately. Do NOT open a public issue.
+  - name: Question or general discussion
+    url: https://github.com/orgs/rivenai/discussions
+    about: For usage questions, open a discussion instead of an issue.
+  - name: Partnership or commercial inquiry
+    url: mailto:hello@riven.ai
+    about: For partnership, press, or commercial inquiries.
+  - name: Code of Conduct concern
+    url: mailto:conduct@riven.ai
+    about: Report Code of Conduct violations confidentially.
