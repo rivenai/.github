@@ -1,0 +1,47 @@
+# Sync labels from .github/labels.yml to this repo.
+#
+# Triggers:
+#   - manual via workflow_dispatch
+#   - on push to main when labels.yml changes
+#
+# Uses EndBug/label-sync. Set delete-other-labels: false initially so that
+# existing labels in other repos are NOT wiped on first run. Flip to true
+# once you are confident the labels.yml is the canonical taxonomy.
+
+name: label-sync
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/labels.yml"
+      - ".github/workflows/label-sync.yml"
+  workflow_dispatch:
+    inputs:
+      delete-other-labels:
+        description: "Delete labels not in labels.yml (DESTRUCTIVE)"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Sync labels
+        uses: EndBug/label-sync@v2
+        with:
+          config-file: .github/labels.yml
+          delete-other-labels: ${{ github.event_name == 'workflow_dispatch' && inputs.delete-other-labels == 'true' }}
+          token: ${{ secrets.GITHUB_TOKEN }}
