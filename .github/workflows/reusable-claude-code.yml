@@ -1,0 +1,92 @@
+# Reusable Claude Code workflow (workflow_call)
+#
+# Wraps anthropics/claude-code-action so any rivenai/* repo can invoke
+# Claude on issues/PRs with a 4-line caller workflow. The Anthropic API
+# key MUST be configured by an org admin as an organization Actions
+# secret named ANTHROPIC_API_KEY (Agents-scope or Actions-scope).
+#
+# Caller example (.github/workflows/claude.yml in the caller repo):
+#
+#   name: claude
+#   on:
+#     issue_comment:
+#       types: [created]
+#     pull_request_review_comment:
+#       types: [created]
+#     issues:
+#       types: [opened, assigned]
+#     pull_request:
+#       types: [opened, ready_for_review]
+#   jobs:
+#     claude:
+#       if: contains(github.event.comment.body, '@claude') || contains(github.event.issue.body, '@claude')
+#       uses: rivenai/.github/.github/workflows/reusable-claude-code.yml@main
+#       secrets:
+#         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+#
+# Every PR Claude opens MUST carry the agent:claude-code label (see
+# rivenai/.github/.github/labels.yml). The action sets this automatically
+# via the labels: input below.
+name: reusable-claude-code
+
+on:
+  workflow_call:
+    inputs:
+      model:
+        description: "Claude model id (default: anthropic recommended)."
+        required: false
+        default: "claude-sonnet-4-5"
+        type: string
+      max-turns:
+        description: "Max conversation turns before exit."
+        required: false
+        default: 12
+        type: number
+      governance-url:
+        description: "URL to AGENTS.md (defaults to org variable)."
+        required: false
+        default: ""
+        type: string
+    secrets:
+      ANTHROPIC_API_KEY:
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+
+jobs:
+  claude:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout caller repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve agent governance URL
+        id: gov
+        run: |
+          if [ -n "${{ inputs.governance-url }}" ]; then
+            echo "url=${{ inputs.governance-url }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "url=${{ vars.RIVEN_AGENT_GOVERNANCE_URL }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          model: ${{ inputs.model }}
+          max_turns: ${{ inputs.max-turns }}
+          system_prompt: |
+            You are an agent operating inside the rivenai GitHub organization.
+            Read the canonical AGENTS.md at ${{ steps.gov.outputs.url }} before
+            taking any action. Every pull request you open MUST be labeled
+            `agent:claude-code`. Follow the conventional commit prefix policy
+            (feat:, fix:, chore:, docs:, refactor:, test:, ci:). Do not touch
+            SAML, billing, or discussions settings.
+          labels: agent:claude-code
