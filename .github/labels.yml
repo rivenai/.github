@@ -1,0 +1,142 @@
+# Org-wide label taxonomy for Riven AI
+#
+# This file is the source of truth for labels across rivenai/* repositories.
+# Applied by .github/workflows/label-sync.yml using EndBug/label-sync.
+#
+# Color convention:
+#   #d73a4a red     bug
+#   #fbca04 yellow  warning / triage
+#   #0e8a16 green   ready / approved
+#   #5319e7 purple  governance / process
+#   #1d76db blue    docs / info
+#   #c5def5 pale    enhancement
+#   #b60205 deep    security / urgent
+#   #ededed gray    closed / wontfix
+#   #6a737d slate   meta / agent
+#   #0052cc deep-blue dependency
+
+# --- Type ---
+- name: bug
+  color: d73a4a
+  description: Something is not working
+- name: enhancement
+  color: c5def5
+  description: New feature or request
+- name: docs
+  color: 1d76db
+  description: Documentation change
+- name: refactor
+  color: ededed
+  description: Code change that neither fixes a bug nor adds a feature
+- name: test
+  color: ededed
+  description: Adding or improving tests
+- name: chore
+  color: ededed
+  description: Maintenance task with no functional change
+
+# --- Status ---
+- name: needs-triage
+  color: fbca04
+  description: Needs initial review and triage
+- name: in-progress
+  color: 0e8a16
+  description: Actively being worked on
+- name: blocked
+  color: b60205
+  description: Blocked on external dependency or decision
+- name: stale
+  color: ededed
+  description: Inactive for too long; will be closed by automation
+- name: pinned
+  color: 5319e7
+  description: Exempt from stale automation
+
+# --- Priority ---
+- name: p1-critical
+  color: b60205
+  description: Production-impacting, customers affected
+- name: p2-important
+  color: d73a4a
+  description: Significant functional impact, no clean workaround
+- name: p3-should-do
+  color: fbca04
+  description: Functional impact, workaround exists
+- name: p4-nice-to-have
+  color: ededed
+  description: Cosmetic or minor
+
+# --- Severity ---
+- name: sev1
+  color: b60205
+  description: Production-impacting
+- name: sev2
+  color: d73a4a
+  description: Significant impact
+- name: sev3
+  color: fbca04
+  description: Functional impact with workaround
+- name: sev4
+  color: ededed
+  description: Cosmetic or minor
+
+# --- Security ---
+- name: security
+  color: b60205
+  description: Security-sensitive; exempt from stale
+
+# --- Governance ---
+- name: governance
+  color: 5319e7
+  description: Changes to AGENTS.md, CONTRIBUTING.md, CODEOWNERS, or org policy
+- name: breaking-change
+  color: b60205
+  description: Backwards-incompatible change requiring a major version bump
+
+# --- Dependencies ---
+- name: dependencies
+  color: 0052cc
+  description: Pull requests that update a dependency
+
+# --- Agent attribution ---
+# Every PR opened by an automated agent MUST carry the matching agent:* label.
+- name: agent:dependabot
+  color: 6a737d
+  description: Opened by Dependabot
+- name: agent:copilot
+  color: 6a737d
+  description: Opened by GitHub Copilot Coding Agent
+- name: agent:claude-code
+  color: 6a737d
+  description: Opened by Anthropic Claude Code
+- name: agent:codespaces-kimi
+  color: 6a737d
+  description: Opened by the Codespaces Kimi background agent
+- name: agent:cursor
+  color: 6a737d
+  description: Opened by Cursor
+- name: agent:aider
+  color: 6a737d
+  description: Opened by Aider
+- name: agent:devin
+  color: 6a737d
+  description: Opened by Devin
+
+# --- Help wanted / contributor signal ---
+- name: good-first-issue
+  color: 7057ff
+  description: Good for newcomers
+- name: help-wanted
+  color: 008672
+  description: Extra attention is needed
+
+# --- Outcome ---
+- name: duplicate
+  color: ededed
+  description: This issue or pull request already exists
+- name: wontfix
+  color: ededed
+  description: This will not be worked on
+- name: invalid
+  color: ededed
+  description: This does not seem right
