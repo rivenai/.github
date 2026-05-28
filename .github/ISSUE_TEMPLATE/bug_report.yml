@@ -1,0 +1,77 @@
+name: Bug report
+description: Report a defect in a Riven AI product or repository
+title: "[bug] <short description>"
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please do not file security vulnerabilities here — see SECURITY.md.
+  - type: input
+    id: repository
+    attributes:
+      label: Affected repository
+      description: Which rivenai/* repository or product surface is affected?
+      placeholder: rivenai/riven-platform
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit SHA
+      description: Tag, release, or git SHA where the bug was observed.
+      placeholder: v0.0.1 or abc1234
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the actual behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Minimal reproduction. Include code blocks where useful.
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs or error output
+      description: Paste only the relevant excerpt. REDACT all secrets, tokens, customer data, and PII before submitting.
+      render: shell
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - sev4 — cosmetic or minor
+        - sev3 — functional impact, workaround exists
+        - sev2 — significant functional impact, no clean workaround
+        - sev1 — production-impacting, customers affected
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Pre-submit checks
+      options:
+        - label: I have searched existing issues and this is not a duplicate
+          required: true
+        - label: This issue does NOT contain secrets, tokens, customer data, or PII
+          required: true
+        - label: This is NOT a security vulnerability (those go to SECURITY.md)
+          required: true
