@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch canonical taxonomy from rivenai/.github
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: rivenai/.github
           ref: ${{ inputs.labels-ref }}
